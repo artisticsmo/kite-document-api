@@ -1,0 +1,10 @@
+{
+  "project": "kite-document-api",
+  "status": "PASS",
+  "checks": [
+    "authenticated real PDF upload",
+    "actual parser preflight",
+    "authorized extraction quote"
+  ],
+  "evidence_level": "E1"
+}

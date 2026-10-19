@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-19T01:57:09.027Z",
+  "project": "kite-document-api",
+  "status": "PASS",
+  "test_cases": 11,
+  "dotnet_assertions": null,
+  "evidence_level": "E1",
+  "scope": "Local contracts; nine shared seller tests are repeated in five consumer repositories",
+  "live_payment_performed": false,
+  "extra": {
+    "corpus": {
+      "text": 10,
+      "table": 10,
+      "scan": 5,
+      "exceptions": 5
+    },
+    "operator_generated_samples": true
+  }
+}

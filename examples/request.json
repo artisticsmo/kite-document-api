@@ -1,0 +1,8 @@
+{
+  "operation_id": "sample-operation",
+  "upload_id": "YOUR_AUTHENTICATED_UPLOAD_ID",
+  "spec_version": "pdf-v1",
+  "page_range": [
+    1
+  ]
+}

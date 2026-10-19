@@ -1,0 +1,40 @@
+schema: 1
+name: kite-document-api
+display_name: Document API
+description: PDF text, table and English OCR extraction with page evidence.
+  Evaluation draft; actual payment/deployment verification is pending.
+maintainer:
+  github: artisticsmo
+status: draft
+network: eip155:2368
+pay_to: "0x0000000000000000000000000000000000000000"
+source: custom
+upstream:
+  name: Document API
+  url: https://github.com/artisticsmo/kite-document-api
+  requires_api_key: true
+endpoints:
+  - method: POST
+    path: /v1/documents/extract
+    summary: PDF text, table and English OCR extraction with page evidence
+    price_usd: "0.01"
+    example_request:
+      body:
+        operation_id: sample-operation
+        upload_id: YOUR_AUTHENTICATED_UPLOAD_ID
+        spec_version: pdf-v1
+        page_range:
+          - 1
+    pitfalls:
+      - "Draft only: configure a real receiver, asset and public origin before
+        deployment."
+      - Use an approved original Passport session; unknown settlement is not
+        permission to repurchase.
+      - Upload through the authenticated application first; upload_id is not a
+        permission token.
+categories:
+  - data
+tags:
+  - kite
+  - x402
+  - agent-services
