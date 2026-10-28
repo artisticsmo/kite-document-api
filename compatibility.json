@@ -125,7 +125,7 @@
       "authorized extraction quote"
     ]
   },
-  "implementation_version": "0.2.0",
+  "implementation_version": "0.2.1",
   "contract_review": {
     "observed_at": "2026-10-28T12:23:41.372Z",
     "passport_commit": "b005121f008c005fc94cf42b2d29e9a3aba2ec99",
@@ -148,5 +148,12 @@
     ],
     "funded_passport_purchase": false,
     "official_catalog_submission": false
+  },
+  "manifest_correction": {
+    "version": "0.2.1",
+    "observed_at": "2026-10-28T12:57:16.837Z",
+    "runtime_code_unchanged": true,
+    "default_auth": "SIWX_wallet",
+    "api_key_required": false
   }
 }

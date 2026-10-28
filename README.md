@@ -2,7 +2,7 @@
 
 PDF text, table and English OCR extraction with page evidence.
 
-Version 0.2.0 is an AI-assisted engineering evaluation release, developed under one operator and assigned to this GitHub account. It is not evidence of independent human adoption, official Kite approval, Electric Capital inclusion or successful live payment.
+Version 0.2.1 is an AI-assisted engineering evaluation release, developed under one operator and assigned to this GitHub account. It is not evidence of independent human adoption, official Kite approval, Electric Capital inclusion or successful live payment.
 
 ## Run and verify
 

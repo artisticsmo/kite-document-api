@@ -12,7 +12,7 @@ source: custom
 upstream:
   name: Document API
   url: https://github.com/artisticsmo/kite-document-api
-  requires_api_key: true
+  requires_api_key: false
 endpoints:
   - method: POST
     path: /v1/documents/extract
@@ -30,8 +30,9 @@ endpoints:
         deployment."
       - Use an approved original Passport session; unknown settlement is not
         permission to repurchase.
-      - Upload through the authenticated application first; upload_id is not a
-        permission token.
+      - Upload through /uploads using the payer wallet SIWX challenge first;
+        upload_id is not a permission token. Application tokens are only needed
+        in explicit DOC_AUTH_MODE=application deployments.
 categories:
   - data
 tags:
