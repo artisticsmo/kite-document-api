@@ -49,16 +49,19 @@ export async function parser(
 }
 export class Documents {
   constructor(vault, { payer, parse = parser, retentionMs = 86400000 } = {}) {
-    if (!/^0x[\da-f]{40}$/i.test(payer || ""))
+    if (payer && !/^0x[\da-f]{40}$/i.test(payer))
       throw fault("APP_PAYER_required", 503);
     Object.assign(this, {
       vault,
-      payer: payer.toLowerCase(),
+      payer: payer?.toLowerCase(),
       parse,
       retentionMs,
     });
   }
-  async upload(pdf_base64) {
+  async upload(pdf_base64, payer = this.payer) {
+    if (!/^0x[\da-f]{40}$/i.test(payer || ""))
+      throw fault("authenticated_payer_required", 401);
+    payer = payer.toLowerCase();
     if (
       typeof pdf_base64 !== "string" ||
       pdf_base64.length > 14 * 1024 * 1024 ||
@@ -73,7 +76,7 @@ export class Documents {
       const id = randomUUID();
       s.uploads[id] = {
         id,
-        payer: this.payer,
+        payer,
         pdf_base64,
         input_hash: hash(Buffer.from(pdf_base64, "base64")),
         ...meta,
@@ -93,9 +96,10 @@ export class Documents {
       };
     });
   }
-  precheck(input) {
+  precheck(input, payer) {
     const u = this.vault.read().uploads?.[input.upload_id];
-    if (!u || u.payer !== this.payer) throw fault("upload_not_found", 404);
+    if (!u || (payer && u.payer !== payer.toLowerCase()))
+      throw fault("upload_not_found", 404);
     if (u.expires_at < Date.now()) throw fault("upload_expired", 410);
     if (
       input.spec_version !== "pdf-v1" ||
@@ -110,8 +114,9 @@ export class Documents {
     return u;
   }
   async execute(input, payer) {
-    if (payer !== this.payer) throw fault("upload_payer_mismatch", 403);
     const u = this.precheck(input);
+    if (u.payer !== payer?.toLowerCase())
+      throw fault("upload_payer_mismatch", 403);
     const result = await this.parse({
       pdf_base64: u.pdf_base64,
       page_range: input.page_range,

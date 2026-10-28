@@ -2,11 +2,11 @@
 
 PDF text, table and English OCR extraction with page evidence.
 
-Version 0.1.0 is an AI-assisted engineering evaluation release, developed under one operator and assigned to this GitHub account. It is not evidence of independent human adoption, official Kite approval, Electric Capital inclusion or successful live payment.
+Version 0.2.0 is an AI-assisted engineering evaluation release, developed under one operator and assigned to this GitHub account. It is not evidence of independent human adoption, official Kite approval, Electric Capital inclusion or successful live payment.
 
 ## Run and verify
 
-Node.js 20.11+ is required.
+Node.js 20.11+ is required; Node.js 24 is used for current CI and is recommended.
 
 ```sh
 python3 -m venv .venv
@@ -18,7 +18,7 @@ PYTHON=.venv/bin/python npm test
 PYTHON=.venv/bin/python npm start
 ```
 
-POST /uploads requires the application bearer token and prechecks a PDF up to 10 MB / 10 pages before charging. APP_PAYER binds this single-operator upload workspace to its intended verified payment address. POST /v1/documents/extract also requires APP_TOKEN and locks upload_id, pdf-v1 and an explicit page_range. A different verified payer cannot buy another user's upload.
+POST /uploads uses an SIWX wallet identity challenge by default and prechecks a PDF up to 10 MB / 10 pages before charging. Each upload belongs to its authenticated wallet. POST /v1/documents/extract locks upload_id, pdf-v1 and an explicit page_range; the verified payment payer must own that upload. APP_TOKEN and APP_PAYER are used only when the operator explicitly selects DOC_AUTH_MODE=application.
 
 The Python subprocess extracts text/words, tables/cells and top-left PDF-point coordinates through pdfplumber. Pages without text use Tesseract English TSV with engine confidence. Every selected page is preserved with issues; no readable output fails before settlement. Corrupt, encrypted, oversized and unsupported documents are rejected at preflight. CPU, time, page dimensions and output are bounded. This is parsing evidence, not semantic fact checking.
 
@@ -35,3 +35,9 @@ Read [compatibility.json](compatibility.json) and [the protocol boundary](docs/P
 ## Scope and evidence
 
 [Original PRD](docs/PRD.md) describes the full target, not a claim that every external acceptance gate has passed. [Event contract](docs/EVENTS.md) defines the application records. The standalone repositories share protocol/storage support code, with distinct business implementations and tests. The license is MIT; third-party dependencies keep their upstream licenses. Reproduce failures without publishing payment signatures, account credentials or private files.
+
+## 2026-10-28 update
+
+Default DOC_AUTH_MODE=wallet: POST /uploads first returns an SIWX identity challenge; repeat with the authenticated wallet signature and the same body. Each upload binds that actual wallet. For extraction, SIWX can authorize the free preflight and the verified payment payer must own the upload. No global APP_TOKEN or APP_PAYER is needed in wallet mode. Explicit DOC_AUTH_MODE=application preserves a single application token/payer integration. All identity recovery stays free. examples/paid-jobs-processor.mjs exports a local PDF processor for windingbuff/kite-paid-jobs, avoiding a nested paid HTTP call. Synthetic parser samples remain regression data, not production OCR accuracy.
+
+See [Kite integration and interoperability boundaries](docs/KITE-INTEGRATION.md) and [this release's changes](CHANGELOG.md).

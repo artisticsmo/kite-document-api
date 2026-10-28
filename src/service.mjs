@@ -98,7 +98,11 @@ export function service({
     if (extraRoute && (await extraRoute(req, res, pathname, context))) return;
     if (pathname === path && req.method === "POST") {
       const input = await body(req, 12 * 1024 * 1024);
-      if (precheck) await precheck(input, req, context);
+      if (precheck) {
+        const gate = await precheck(input, req, context);
+        if (gate?.status)
+          return json(res, gate.status, gate.body, gate.headers);
+      }
       const config = vault.read().config?.config || initial;
       if (config.paused) throw fault("service_paused", 503);
       const current = new Seller({

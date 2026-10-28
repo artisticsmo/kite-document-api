@@ -76,3 +76,49 @@ test("upload belongs to configured application payer and locks extraction range"
   });
   assert.equal((await docs.execute(i, payer)).input_hash, u.input_hash);
 });
+test("wallet-authenticated uploads isolate independent buyers without global payer", async (t) => {
+  const folder = mkdtempSync(join(tmpdir(), "multi-docs-"));
+  t.after(() => rmSync(folder, { recursive: true, force: true }));
+  const docs = new Documents(
+    new Vault(folder, randomBytes(32).toString("hex")),
+    {
+      parse: async (i) =>
+        i.mode === "inspect"
+          ? { page_count: 1 }
+          : { pages: [{ text: "evidence" }] },
+    },
+  );
+  const a = "0x" + "a".repeat(40),
+    b = "0x" + "b".repeat(40);
+  const first = await docs.upload(
+    Buffer.from("%PDF-buyer-a").toString("base64"),
+    a,
+  );
+  const second = await docs.upload(
+    Buffer.from("%PDF-buyer-b").toString("base64"),
+    b,
+  );
+  const input = (id) => ({
+    upload_id: id,
+    spec_version: "pdf-v1",
+    page_range: [1],
+  });
+  assert.throws(() => docs.precheck(input(first.upload_id), b), {
+    code: "upload_not_found",
+  });
+  await assert.rejects(docs.execute(input(first.upload_id), b), {
+    code: "upload_payer_mismatch",
+  });
+  assert.equal(
+    (await docs.execute(input(first.upload_id), a)).pages[0].text,
+    "evidence",
+  );
+  assert.equal(
+    (await docs.execute(input(second.upload_id), b)).pages[0].text,
+    "evidence",
+  );
+  await assert.rejects(
+    docs.upload(Buffer.from("%PDF-no-identity").toString("base64")),
+    { code: "authenticated_payer_required" },
+  );
+});
